@@ -1,0 +1,28 @@
+{
+  "name": "face-recognition-api",
+  "version": "1.0.0",
+  "description": "server-side code of face-recognition project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lanzoninicola/face-recognition-api.git"
+  },
+  "author": "Nicola Lanzoni",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lanzoninicola/face-recognition-api/issues"
+  },
+  "homepage": "https://github.com/lanzoninicola/face-recognition-api#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.1.3",
+    "express-secure-only": "^0.2.1",
+    "helmet": "^3.23.3",
+    "nodemon": "^2.0.4"
+  }
+}
