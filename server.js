@@ -51,8 +51,7 @@ app.post('/register', (req, res, next) => {
 app.get('/profile/:id', (req, res, next) => {
 
     const { id } = req.params;
-
-    let userFound = users.filter(user => user.id === id);
+    const userFound = users.filter(user => user.id === id);
 
     if (userFound.length > 0) {
         res.status(200).json('user found');
@@ -67,9 +66,6 @@ app.post('/image', (req, res, next) => {
     let { id } = req.body;
 
     let userFound = users.filter(user => user.id === id);
-
-    console.log(userFound[0])
-
     if (userFound.length > 0) {
         userFound[0].entries++
         res.status(200).json({ "entries": userFound[0].entries });
