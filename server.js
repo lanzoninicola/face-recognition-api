@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 let users = require('./users.js');
 
 
@@ -34,18 +36,19 @@ app.post('/register', (req, res, next) => {
 
     const { name, email, password } = req.body;
 
-    if (name && email && password) {
-        users.push({
-            id: '188',
-            name: name,
-            email: email,
-            password: password
-        })
+    (async function () {
+        const salt = await bcrypt.genSalt(10);
 
-        res.status(200).json('registration succesful');
-    } else {
-        res.status(500).json('some error occured');
-    }
+        // hash the password along with our new salt
+        const passwordHashed = await bcrypt.hash(password, salt);
+        let newUser = { name: name, email: email, password: passwordHashed };
+
+        users.push(newUser);
+
+        res.status(200).json(users[users.length - 1])
+    })().catch(err => {
+        // handle error
+    });
 });
 
 app.get('/profile/:id', (req, res, next) => {
