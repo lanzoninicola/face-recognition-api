@@ -16,8 +16,8 @@ POST http://localhost:4000/register
 content-type: application/json
 
 {
-    "name": "Gustavo",
-    "email" : "gustavo.bergamaschi@gmail.com",
+    "name": "Mdfddareaseeio",
+    "email" : "mf2as4e3rio.rdossi@gmafidl.com",
     "password" : "pera"
 }
 
