@@ -1,13 +1,18 @@
 const knex = require('../config/db_connection');
-const { insert } = require('../config/db_connection');
 
+const notifyErrors = (error) => {
+    return queryResult = {
+        status: 'failed',
+        output: '',
+        error: error.message
+    };
+}
 
-
-module.exports.insertUser = async (user = {}) => {
+module.exports.insertNewUser = async (user = {}) => {
 
     const { name, email, password } = user;
 
-    let queryResult = { status: '', output: '' }
+    let queryResult = { status: '', output: '', error: '' }
 
     try {
         const newUserRecord = await knex('users').returning('*').insert({
@@ -26,7 +31,8 @@ module.exports.insertUser = async (user = {}) => {
             .then(newUser => {
                 queryResult = {
                     status: 'success',
-                    output: newUser[0][0]
+                    output: newUser[0][0],
+                    error: ''
                 }
                 return queryResult;
             })
@@ -36,31 +42,56 @@ module.exports.insertUser = async (user = {}) => {
         // handling errors at system level 
 
         // send error response to the client
-        return queryResult = {
-            status: 'failed',
-            output: error.message
-        };
+        notifyErrors(error);
     }
 
 
 }
 
-const getUsers = async () => {
+module.exports.getUserByEmail = async (email = '') => {
+
+    let queryResult = { status: '', output: '', error: '' }
+
     try {
-        const usersList = await knex.select('name').from('users');
-        return usersList;
-    } catch (error) {
-        console.log('error: ', error);
-    }
+        const userLookedUp = await knex.select('*').from('users').where('email', email);
 
+        if (userLookedUp.length === 0) {
+            queryResult = {
+                status: 'success',
+                output: userLookedUp[0],
+                error: ''
+            }
+        }
+
+        return queryResult;
+
+    } catch (error) {
+        notifyErrors(error);
+    }
+}
+
+
+module.exports.getUserHash = async (email = '') => {
+
+    let queryResult = { status: '', output: '', error: '' }
+
+    try {
+        const hash = await knex.select('hash').from('login').where('email', email);
+
+        if (userLookedUp.length === 0) {
+            queryResult = {
+                status: 'success',
+                output: hash,
+                error: ''
+            }
+        }
+
+        return queryResult;
+
+    } catch (error) {
+        notifyErrors(error);
+    }
 }
 
 
 
-// let user = {
-//     name: 'Mae2r2a',
-//     email: 'malac22earnemara@gmail.com',
-//     password: 'fdskajfòasjòfjkadsòlfjkòaldskjfòkjasflkjadsòlkjfòalksdjfòlkjasdfjakl'
-// }
-
-// insertUser(user).then(result => console.log(result[0]));

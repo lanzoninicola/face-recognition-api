@@ -3,8 +3,9 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors')
 const crypt = require('./helper/crypt');
-const db = require('./model/dbQuery');
+const { userAuth } = require('./controller/userAuth');
 const { query } = require('express');
+const { userAuth } = require('./controller/userAuth');
 
 
 // added security configuration
@@ -24,72 +25,93 @@ app.get('/', (req, res) => {
     res.send(users)
 });
 
-app.post('/signin', (req, res, next) => {
+app.post('/signin', async (req, res, next) => {
 
     const { signInEmail, signInPassword } = req.body;
 
-    if (signInEmail && signInPassword) {
-        const userLookedUpd = users.filter(user => user.email === signInEmail);
+    try {
 
-        crypt.compare(signInPassword, userLookedUpd[0].password)
-            .then(result => {
-                if (result) {
-                    res.status(200)
-                        .json({
-                            result: 'success',
-                            userLogged: {
-                                id: userLookedUpd[0].id,
-                                name: userLookedUpd[0].name,
-                                email: userLookedUpd[0].email,
-                                entries: userLookedUpd[0].entries
-                            }
-                        }
-                        );
-                } else res.status(500).json({
-                    result: 'failed',
-                    description: 'Credential did not match'
-                })
-            })
-            .catch(err => res.status(500).json('Some error occured:' + err))
-    } else {
-        res.status(500).json('Email and password is required')
+        let authResult = await userAuth(signInEmail, signInPassword);
+
+        console.log(authResult);
+
+    } catch (error) {
+        console.log(error)
+
     }
-});
 
-app.post('/register', (req, res, next) => {
+
+
+    // userAuth(signInEmail, signInPassword)
+    //     .then(result => {
+    //         If(result.isLogged) {
+    //             res.status(200).json({
+    //                 result: 'success',
+    //                 userLogged: queryResult.output
+    //             });
+    //         }
+
+    //         if (!result.isLogged) {
+    //             throw new Error(result.errorMessage)
+    //         }
+    //     })
+    //     .catch(error => res.status(400).json('some error occured:' + error))
+
+    // try {
+
+
+
+
+    //     const hashedSignInPassword = await crypt.compare(signInPassword,)
+
+    //     const queryResult = await db.userAuth({ email: signInEmail, password: hashedSignInPassword })
+
+
+
+    //     if (queryResult.status === 'success') {
+    //         res.status(200).json({
+    //             result: 'success',
+    //             userLogged: queryResult.output
+    //         });
+    //     }
+    //     if (queryResult.status === 'failed') {
+    //         throw Error(queryResult.output);
+    //     }
+
+    // } catch (error) {
+    //     res.status(400).json('some error occured:' + error)
+    // }
+
+})
+
+app.post('/register', async (req, res, next) => {
 
     // https://www.elephantsql.com/plans.html
 
     const { name, email, password } = req.body;
 
-    console.log(req.body);
+    try {
+        const hashedPwd = await crypt.hashing(password)
 
-    crypt.hashing(password)
-        .then(hashedPwd => {
-            let newUser = {
-                name: name, email: email, password: hashedPwd
-            }
-            db.insertUser(newUser)
-                .then(queryResult => {
-                    if (queryResult.status === 'success') {
-                        res.status(200).json({
-                            result: 'success',
-                            user: queryResult.output
-                        });
-                    }
-                    if (queryResult.status === 'failed') {
-                        throw Error(queryResult.output);
-                    }
-                }
-                )
-                .catch(err => {
-                    // error sent to the client
-                    res.status(400).json('some error occured: ' + err)
-                })
-        })
-        .catch(err => res.status(500).json('some error occured:' + err))
+        let user = {
+            name: name, email: email, password: hashedPwd
+        }
 
+        const queryResult = await db.insertNewUser(user)
 
+        if (queryResult.status === 'success') {
+            res.status(200).json({
+                result: 'success',
+                user: queryResult.output
+            });
+        }
+        if (queryResult.status === 'failed') {
+            throw Error(queryResult.output);
+        }
+
+    } catch (error) {
+        res.status(400).json('some error occured:' + error)
+    }
 });
 
 app.get('/profile/:id', (req, res, next) => {

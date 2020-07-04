@@ -6,8 +6,8 @@ POST http://localhost:4000/signin HTTP/1.1
 content-type: application/json
 
 {
-    "email" : "lanzoni.nicola@gmail.com",
-    "password" : "mela"
+    "signInEmail" : "lanzoni.nicola@gmail.com",
+    "signInPassword" : "mela"
 }
 
 ###
@@ -17,7 +17,7 @@ content-type: application/json
 
 {
     "name": "Mdfddareaseeio",
-    "email" : "mf2as4e3rio.rdossi@gmafidl.com",
+    "email" : "mfd2aes4e3rio.rdossi@gmafidl.com",
     "password" : "pera"
 }
 
