@@ -1,10 +1,11 @@
 const knex = require('../config/db_connection');
+const { query } = require('express');
 
-const notifyErrors = (error) => {
+const notifyErrors = (error, origin) => {
     return queryResult = {
-        status: 'failed',
-        output: '',
-        error: error.message
+        status: 'rejected',
+        payload: error.message,
+        module: origin
     };
 }
 
@@ -39,10 +40,11 @@ module.exports.insertNewUser = async (user = {}) => {
 
     } catch (error) {
 
+
         // handling errors at system level 
 
         // send error response to the client
-        notifyErrors(error);
+        return notifyErrors(error, 'insertNewUser');
     }
 
 
@@ -50,46 +52,37 @@ module.exports.insertNewUser = async (user = {}) => {
 
 module.exports.getUserByEmail = async (email = '') => {
 
-    let queryResult = { status: '', output: '', error: '' }
+    // let queryResult = { status: '', output: '', error: '' }
+    let queryResult = { status: '', payload: '' };
 
     try {
         const userLookedUp = await knex.select('*').from('users').where('email', email);
 
-        if (userLookedUp.length === 0) {
-            queryResult = {
-                status: 'success',
-                output: userLookedUp[0],
-                error: ''
-            }
+        return queryResult = {
+            status: 'fulfilled',
+            payload: userLookedUp
         }
 
-        return queryResult;
-
     } catch (error) {
-        notifyErrors(error);
+        return notifyErrors(error, 'getUserByEmail');
     }
 }
 
 
-module.exports.getUserHash = async (email = '') => {
+module.exports.getUserPwdHash = async (email = '') => {
 
-    let queryResult = { status: '', output: '', error: '' }
+    let queryResult = { status: '', payload: '' };
 
     try {
         const hash = await knex.select('hash').from('login').where('email', email);
 
-        if (userLookedUp.length === 0) {
-            queryResult = {
-                status: 'success',
-                output: hash,
-                error: ''
-            }
+        return queryResult = {
+            status: 'fulfilled',
+            payload: hash
         }
 
-        return queryResult;
-
     } catch (error) {
-        notifyErrors(error);
+        return notifyErrors(error, 'getUserByEmail');
     }
 }
 

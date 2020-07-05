@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 const crypt = require('./helper/crypt');
 const { userAuth } = require('./controller/userAuth');
-const { query } = require('express');
-const { userAuth } = require('./controller/userAuth');
+const db = require('./model/dbQuery');
+
 
 
 // added security configuration
@@ -29,58 +29,21 @@ app.post('/signin', async (req, res, next) => {
 
     const { signInEmail, signInPassword } = req.body;
 
-    try {
+    const userAuthAttempts = await userAuth(signInEmail, signInPassword);
 
-        let authResult = await userAuth(signInEmail, signInPassword);
-
-        console.log(authResult);
-
-    } catch (error) {
-        console.log(error)
-
+    if (userAuthAttempts.result === 'success') {
+        res.status(200).json({
+            result: 'success',
+            userLoggedIn: userAuthAttempts.payload
+        });
     }
 
-
-
-    // userAuth(signInEmail, signInPassword)
-    //     .then(result => {
-    //         If(result.isLogged) {
-    //             res.status(200).json({
-    //                 result: 'success',
-    //                 userLogged: queryResult.output
-    //             });
-    //         }
-
-    //         if (!result.isLogged) {
-    //             throw new Error(result.errorMessage)
-    //         }
-    //     })
-    //     .catch(error => res.status(400).json('some error occured:' + error))
-
-    // try {
-
-
-
-
-    //     const hashedSignInPassword = await crypt.compare(signInPassword,)
-
-    //     const queryResult = await db.userAuth({ email: signInEmail, password: hashedSignInPassword })
-
-
-
-    //     if (queryResult.status === 'success') {
-    //         res.status(200).json({
-    //             result: 'success',
-    //             userLogged: queryResult.output
-    //         });
-    //     }
-    //     if (queryResult.status === 'failed') {
-    //         throw Error(queryResult.output);
-    //     }
-
-    // } catch (error) {
-    //     res.status(400).json('some error occured:' + error)
-    // }
+    if (userAuthAttempts.result === 'failed') {
+        res.status(400).json({
+            result: 'failed',
+            message: userAuthAttempts.payload
+        });
+    }
 
 })
 
