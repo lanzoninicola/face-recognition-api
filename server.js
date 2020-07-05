@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 const crypt = require('./helper/crypt');
 const { userAuth } = require('./controllers/userAuth');
+const { callAPI } = require('./controllers/callAPI');
 const db = require('./models/dbQuery');
 
 
@@ -25,6 +26,12 @@ app.get('/', (req, res) => {
 });
 
 app.post('/signin', async (req, res, next) => {
+
+    // A message to Nicola of the future
+    // clean up this part and call a function built in the controllers folder
+    // result expected for the route (see the line below)
+    // app.post('/signin', (req, res, next) => {userAuth(req, res)} )
+
 
     const { signInEmail, signInPassword } = req.body;
     const userAuthAttempts = await userAuth(signInEmail, signInPassword);
@@ -92,19 +99,26 @@ app.get('/profile/:id', (req, res, next) => {
 
 app.post('/image', (req, res, next) => {
 
-    let { idUser } = req.body;
+    // let { idUser } = req.body;
 
-    console.log(idUser);
+    // // console.log(idUser);
 
-    let userFound = users.filter(user => user.id === idUser);
+    // let userFound = users.filter(user => user.id === idUser);
 
-    if (userFound.length > 0) {
-        userFound[0].entries++
-        res.status(200).json({ "entries": userFound[0].entries });
-    } else {
-        res.status(404).json('user not found');
-    }
+    // if (userFound.length > 0) {
+    //     userFound[0].entries++
+    //     res.status(200).json({ "entries": userFound[0].entries });
+    // } else {
+    //     res.status(404).json('user not found');
+    // }
 
 });
+
+
+app.post('/apifacerecognition', (req, res) => callAPI(req, res))
+
+app.get('/ping', (req, res) => {
+    res.status(200).json({ status: 'ready' })
+})
 
 app.listen(app.get('port'))

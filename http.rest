@@ -2,6 +2,13 @@ GET http://localhost:4000
 
 ###
 
+GET http://localhost:4000/ping
+
+###
+GET https://face-recognition-api2020.herokuapp.com/ping
+
+###
+
 POST http://localhost:4000/signin HTTP/1.1
 content-type: application/json
 
