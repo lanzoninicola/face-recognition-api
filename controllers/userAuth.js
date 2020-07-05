@@ -1,5 +1,5 @@
-const crypt = require('.././helper/crypt');
-const db = require('.././model/dbQuery');
+const crypt = require('../helper/crypt');
+const db = require('../models/dbQuery');
 
 
 const findUserByEmail = async (email) => {
