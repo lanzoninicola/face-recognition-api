@@ -3,8 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors')
 const crypt = require('./helper/crypt');
-const { userAuth } = require('./controller/userAuth');
-const db = require('./model/dbQuery');
+const { userAuth } = require('./controllers/userAuth');
+const db = require('./models/dbQuery');
 
 
 // added security configuration
