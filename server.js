@@ -7,7 +7,6 @@ const { userAuth } = require('./controller/userAuth');
 const db = require('./model/dbQuery');
 
 
-
 // added security configuration
 // require('./config/security')(app)
 
@@ -28,7 +27,6 @@ app.get('/', (req, res) => {
 app.post('/signin', async (req, res, next) => {
 
     const { signInEmail, signInPassword } = req.body;
-
     const userAuthAttempts = await userAuth(signInEmail, signInPassword);
 
     if (userAuthAttempts.result === 'success') {
@@ -51,7 +49,7 @@ app.post('/register', async (req, res, next) => {
 
     // https://www.elephantsql.com/plans.html
 
-    const { name, email, password } = req.body;
+    // https://www.elephantsql.com/plans.html
 
     try {
         const hashedPwd = await crypt.hashing(password)
@@ -75,6 +73,8 @@ app.post('/register', async (req, res, next) => {
     } catch (error) {
         res.status(400).json('some error occured:' + error)
     }
+
+
 });
 
 app.get('/profile/:id', (req, res, next) => {

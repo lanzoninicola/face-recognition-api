@@ -28,4 +28,4 @@ module.exports.compare = (text, hash) => {
             resolve(result)
         });
     });
-}
+
